@@ -1,0 +1,30 @@
+Phone Book Project
+
+- react typescript
+- single page and mobile (responsive)
+- CSS, JS emotion
+- GraphQL -> kaya REST API
+- using web storage -> buat nyimpen data
+- lighthouse (optional) -> testing web
+- hosted and deploy
+
+Nilai tambah
+- integration test and unit test
+- react hooks and react context
+
+
+fitur :
+- list contact :
+    - paling atas merupakan kontak favorit v
+    - lanjut 10 list kontak v
+    - sisanya pakai pagination v
+    - setiap kontak muncul data : nama dan nomor telepon v
+    - kontak bisa dijadikan reguler/favorit v
+    - dapat menambhkan kontak baru & menghapus kontak v
+    - ada input search buat cari kontak v
+    - dapat edit kontak (optional)
+- form contact page
+    - nama kontak harus unik dan tidak ada spesial karakter
+    - nomor boleh sama ?
+    - untuk edit, harus bisa liat data seblumnya
+
