@@ -3,7 +3,11 @@ import { useState, useEffect, useMemo } from 'react';
 import Pagination from '@/components/pagination';
 import UsePagination from '@/components/usePagination';
 import DummyData from '@/helpers/dummyData';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faClose, faPenToSquare, faStar as solidStar, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons/faStar';
+import ListContact from '@/components/ListCard';
+import Header from '@/components/header';
 interface formType {
   id: number;
   name: string;
@@ -28,6 +32,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [changeData, setChangeData] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [isNewContact, setIsNewContact] = useState<boolean>(false);
 
   const sorting = (data: any) => {
     return data.sort((a: any, b: any) => {
@@ -66,25 +71,20 @@ export default function Home() {
     });
   };
   const handleCreate = () => {
+    const regexPattern = /^[A-Za-z0-9]+$/;
+    const isConstantValid = regexPattern.test(form.name);
+    const isNotUnique = allContact.some((item) => item.name === form.name);
+    if (!isConstantValid || isNotUnique) return;
+
     const newData = { ...form, favorite: favorite, id: allContact.length + 1 };
     const storedData = JSON.parse(localStorage.getItem('phoneBook'));
     storedData.data.push(newData);
     setAllContact([...allContact, newData]);
     localStorage.setItem('phoneBook', JSON.stringify(storedData));
+
+    setIsNewContact(false);
   };
-  const handleDelete = (id: number) => {
-    const storedData = JSON.parse(localStorage.getItem('phoneBook'));
-    storedData.data = storedData.data.filter((data: any) => data.id !== id);
-    const newData = allContact.filter((data) => data.id !== id);
-    setAllContact(newData);
-    localStorage.setItem('phoneBook', JSON.stringify(storedData));
-  };
-  const handlePick = (id: number) => {
-    setIsChange(true);
-    const newData = allContact.filter((data) => data.id === id);
-    setChangeData(newData);
-    setIndex(id);
-  };
+
   const handleFavorite = () => {
     const updatedData = allContact.map((item) => {
       if (item.id === index) {
@@ -97,8 +97,7 @@ export default function Home() {
     setIndex(0);
   };
 
-  const PER_PAGE = 5;
-  // Menghitung indeks item yang ditampilkan pada halaman ini
+  const PER_PAGE = 10;
   const startIndex = (currentPage - 1) * PER_PAGE;
   const endIndex = startIndex + PER_PAGE;
   const handlePrev = () => {
@@ -115,47 +114,78 @@ export default function Home() {
   const itemsToShow = filteredResult.slice(startIndex, endIndex);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      Phone Booth
-      <div>
-        <div>
-          <input onChange={(e) => setSearchResult(e.target.value)} value={searchResult} type="text" />
-          <button>add contact</button>
-        </div>
-        <div>
-          <input onChange={(e) => handleChange(e)} name="name" value={form.name} type="text" placeholder="name" />
-          <input onChange={(e) => handleChange(e)} name="phone" value={form.phone} type="text" placeholder="phone" />
-          <input type="checkbox" onChange={() => setFavorite(!favorite)} value="favorite" name="favorite" id="favorite" />
-          <button onClick={() => handleCreate()}>Create</button>
-        </div>
-      </div>
-      {isChange && (
-        <>
-          <div className="bg-blue-200">
-            nama : {changeData[0].name}
-            <button onClick={() => handleFavorite()}>ubah ke {changeData[0].favorite ? 'regular' : 'Favorit'}</button>
-          </div>
-        </>
-      )}
-      <div>
-        {itemsToShow.map((data) => (
-          <div className="flex" key={data.id}>
-            <div className="flex" onClick={() => handlePick(data.id)}>
-              <div>{data.id} </div>
-              <div>{data.name} </div>
-              <div> {data.phone} </div>
-              <div> {data.favorite ? 'favorite' : 'regular'} </div>
+    <div className="bg-blueTwo min-h-screen flex flex-col items-center justify-between">
+      <main className="flex w-full md:w-[50%] flex-col gap-10 items-center justify-between py-12 ">
+        {/* header */}
+        <Header />
+        {/* input search and form */}
+        <section className="w-[80%] flex flex-col gap-[10px]">
+          <input
+            onChange={(e) => setSearchResult(e.target.value)}
+            value={searchResult}
+            className="w-full px-1 py-2 text-gray-700 border border-blue-100 rounded shadow appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+            type="text"
+            placeholder="nama kontak"
+          />
+          {isNewContact ? (
+            <div className="relative bg-greyOne shadow-md rounded-md flex justify-center">
+              <div className="flex flex-col w-[90%] pt-[30px] pb-[10px] gap-1 content-center item-middle ">
+                <div className="w-full flex flex-col gap-1">
+                  <label />
+                  <input
+                    onChange={(e) => handleChange(e)}
+                    name="name"
+                    value={form.name}
+                    className="w-full px-3 py-2 text-gray-700 border border-blue-100 rounded shadow appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    type="text"
+                    placeholder="name"
+                  />
+                </div>
+                <div className="w-full flex flex-col gap-1">
+                  <label />
+                  <input
+                    onChange={(e) => handleChange(e)}
+                    name="phone"
+                    value={form.phone}
+                    type="text"
+                    placeholder="phone"
+                    className="w-full px-3 py-2 text-gray-700 border border-blue-100 rounded shadow appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="w-full flex items-center justify-start gap-6 pt-2 pb-4">
+                  <div className="flex gap-2">
+                    <input type="checkbox" onChange={() => setFavorite(!favorite)} value="favorite" name="favorite" id="favorite" />
+                    <label>Favorite Contact</label>
+                  </div>
+                </div>
+                <button type="submit" onClick={() => handleCreate()} className={'w-full px-5 py-2 text-white duration-300 ease-in-out bg-blueOne border-2 rounded font-700 hover:bg-blue-500 hover:border-blue-500 hover:scale-90'}>
+                  Create
+                </button>
+              </div>
+              <button onClick={() => setIsNewContact(!isNewContact)} type="button" className="absolute w-5 h-5 text-xs duration-300 ease-in-out rounded-full shadow-md top-2 right-2 bg-greyOne hover:scale-90">
+                <FontAwesomeIcon icon={faClose} className="w-4 h-4 text-black" />
+              </button>
             </div>
-            <button onClick={() => handleDelete(data.id)} className="mx-2">
-              delete
+          ) : (
+            <button onClick={() => setIsNewContact(!isNewContact)} className="w-full cursor-pointer py-[8px] px-[12px] text-center border-2 border-solid bg-greyOne hover:shadow-sm ease-in-out duration-300">
+              + add contact
             </button>
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-4">
-        <button onClick={handlePrev}>prev</button>
-        <button onClick={handleNext}>next</button>
-      </div>
-    </main>
+          )}
+        </section>
+        {isChange && (
+          <>
+            <div className="bg-blue-200">
+              nama : {changeData[0].name}
+              <button onClick={() => handleFavorite()}>ubah ke {changeData[0].favorite ? 'regular' : 'Favorit'}</button>
+            </div>
+          </>
+        )}
+        {/* list contact */}
+        <section className="w-[80%] bg-white shadow-md flex flex-col gap-6 rounded-md py-5 justify-center items-center">
+          <ListContact allContact={allContact} setAllContact={setAllContact} setIsChange={setIsChange} setChangeData={setChangeData} setIndex={setIndex} itemsToShow={itemsToShow} />
+          <Pagination handlePrev={handlePrev} handleNext={handleNext} />
+        </section>
+      </main>
+    </div>
   );
 }
