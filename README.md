@@ -1,10 +1,11 @@
 # must do
 
 - learn GraphQL
-- modal for delete & favorite
 - alert when form wrong
-- sorting by name
 - refactory code
+- regex and validator for first and last name
+- search for last name
+- cara peroleh iD ganti
 
 # do
 
@@ -27,3 +28,5 @@
 - implement local storage
 - validator for form
 - redesign
+- update form
+- modal for delete & favorite
