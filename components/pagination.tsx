@@ -1,4 +1,8 @@
-export default function Pagination({ handlePrev, handleNext }: any) {
+interface PaginationSchema {
+  handlePrev: () => void;
+  handleNext: () => void;
+}
+export default function Pagination({ handlePrev, handleNext }: PaginationSchema) {
   return (
     <div className="flex gap-4">
       <button

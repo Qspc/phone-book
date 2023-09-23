@@ -3,14 +3,12 @@
 // import { useState } from 'react';
 import { useState } from 'react';
 
-interface usePaginationProps {
+interface usePaginationSchema {
   data: any;
   itemsPerPage: any;
-  currentPage: any;
-  setCurrentPage: any;
 }
 
-export default function UsePagination({ data, itemsPerPage }: any) {
+export default function UsePagination({ data, itemsPerPage }: usePaginationSchema) {
   const [currentPage, setCurrentPage] = useState(1);
   const maxPage = Math.ceil(data.length / itemsPerPage);
 

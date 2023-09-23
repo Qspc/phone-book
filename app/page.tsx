@@ -15,13 +15,8 @@ import EditModal from '@/components/editModal';
 import SearchInput from '@/components/searchInput';
 import { useIndexStore } from '@/components/types/dataUser';
 import { shallow } from 'zustand/shallow';
-interface formType {
-  id: number;
-  first_name: string;
-  last_name: string;
-  phones: string[];
-  favorite: boolean;
-}
+import { AllNumberValues, AllFormValues } from '@/types/formSchema';
+
 const USER_DATA = gql`
   query GetContactList($distinct_on: [contact_select_column!], $limit: Int, $offset: Int, $order_by: [contact_order_by!], $where: contact_bool_exp) {
     contact(distinct_on: $distinct_on, limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
@@ -39,10 +34,13 @@ const USER_DATA = gql`
 export default function Home() {
   // const { error, data } = useQuery(USER_DATA, { client });
   // if (data) console.log(data);
-  const [changeModalDelete, changeModalFavorite, changeModalEdit] = useIndexStore((state: any) => [state.changeModalDelete, state.changeModalFavorite, state.changeModalEdit], shallow);
+  const [changeModalDelete, changeModalFavorite, changeModalEdit, newContact, changeNewContact] = useIndexStore(
+    (state: any) => [state.changeModalDelete, state.changeModalFavorite, state.changeModalEdit, state.newContact, state.changeNewContact],
+    shallow
+  );
   const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
-  const [allContact, setAllContact] = useState<formType[]>(getData);
-  const [form, setForm] = useState<formType>({
+  const [allContact, setAllContact] = useState<AllFormValues[]>(getData);
+  const [form, setForm] = useState<AllFormValues>({
     id: 0,
     first_name: '',
     last_name: '',
@@ -50,25 +48,24 @@ export default function Home() {
     favorite: false,
   });
   const [searchResult, setSearchResult] = useState(''); // input yang dicari
-  const [allNumber, setAllNumber] = useState<any[]>([]);
+  const [allNumber, setAllNumber] = useState<AllNumberValues[]>([]);
   const [currentPage, setCurrentPage] = useState(1); // page
   const [totalPages, setTotalPages] = useState(0); // total page
-  const [isNewContact, setIsNewContact] = useState<boolean>(false);
 
-  const sorting = (data: any) => {
-    return data.sort((a: any, b: any) => {
+  const sorting = (data: AllFormValues[]) => {
+    return data.sort((a: AllFormValues, b: AllFormValues) => {
       if (a.favorite === b.favorite) {
         return 0;
       }
       if (a.favorite) {
-        return -1; // Akan diurutkan di atas jika favorite true
+        return -1;
       }
-      return 1; // Akan diurutkan di bawah jika favorite false
+      return 1;
     });
   };
-  const filteredResult = useMemo<formType[]>(() => {
+  const filteredResult = useMemo<AllFormValues[]>(() => {
     if (searchResult) {
-      const newData = allContact.filter((item) => Object.values(item.first_name).join('').toLowerCase().includes(searchResult.toLowerCase()));
+      const newData = allContact.filter((item: any) => Object.values(item.first_name).join('').toLowerCase().includes(searchResult.toLowerCase()));
       const sortingData = sorting(newData);
       setCurrentPage(1);
       return sortingData;
@@ -87,10 +84,10 @@ export default function Home() {
   }, [filteredResult]);
 
   const handleDelete = (id: number) => {
-    const newData = allContact.filter((data: any) => data.id !== id);
+    const newData = allContact.filter((data: AllFormValues) => data.id !== id);
     setAllContact(newData);
     localStorage.setItem('phoneBook', JSON.stringify(newData));
-    changeModalDelete();
+    changeModalDelete(false);
   };
   const handleFavorite = (id: number) => {
     const updatedData = allContact.map((item) => {
@@ -100,7 +97,7 @@ export default function Home() {
       return item;
     });
     setAllContact(updatedData);
-    changeModalFavorite();
+    changeModalFavorite(false);
   };
   const handleClearForm = () => {
     setForm({
@@ -137,23 +134,22 @@ export default function Home() {
           {/* search */}
           <SearchInput searchResult={searchResult} setSearchResult={setSearchResult} />
           {/* form */}
-          {isNewContact ? (
+          {newContact ? (
             <FormContact
               form={form}
               setForm={setForm}
               onClose={() => {
-                setIsNewContact(false);
+                changeNewContact(false);
                 handleClearForm();
               }}
               allContact={allContact}
               setAllContact={setAllContact}
               getData={getData}
-              isNewContact={isNewContact}
               allNumber={allNumber}
               setAllNumber={setAllNumber}
             />
           ) : (
-            <button onClick={() => setIsNewContact(!isNewContact)} className="w-full cursor-pointer py-[8px] px-[12px] text-center border-2 border-solid bg-greyOne hover:shadow-sm ease-in-out duration-300">
+            <button onClick={() => changeNewContact(false)} className="w-full cursor-pointer py-[8px] px-[12px] text-center border-2 border-solid bg-greyOne hover:shadow-sm ease-in-out duration-300">
               + add contact
             </button>
           )}
@@ -162,9 +158,9 @@ export default function Home() {
         <section className="w-[80%] bg-white shadow-md flex flex-col gap-6 rounded-md py-5 justify-center items-center">
           <ListContact
             itemsToShow={itemsToShow}
-            onModalOpen={() => changeModalDelete()}
-            onModalEdit={() => changeModalEdit()}
-            onModalFavorite={() => changeModalFavorite()}
+            onModalOpen={() => changeModalDelete(true)}
+            onModalEdit={() => changeModalEdit(true)}
+            onModalFavorite={() => changeModalFavorite(true)}
             setForm={setForm}
             allContact={allContact}
             setAllNumber={setAllNumber}
@@ -173,7 +169,7 @@ export default function Home() {
         </section>
         {/* modal */}
         <DeletedModal onClose={() => changeModalDelete()} onDeleted={handleDelete} />
-        <FavoriteModal onFavorite={handleFavorite} onClose={() => changeModalFavorite()} data={allContact} />
+        <FavoriteModal onClose={() => changeModalFavorite(false)} onFavorite={handleFavorite} data={allContact} />
         <EditModal allNumber={allNumber} setAllNumber={setAllNumber} form={form} setForm={setForm} allContact={allContact} setAllContact={setAllContact} getData={getData} handleClearForm={handleClearForm} />
       </main>
     </div>

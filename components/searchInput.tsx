@@ -1,4 +1,8 @@
-export default function SearchInput({ searchResult, setSearchResult }: any) {
+interface SearchInputSchema {
+  searchResult: string;
+  setSearchResult: React.Dispatch<React.SetStateAction<string>>;
+}
+export default function SearchInput({ searchResult, setSearchResult }: SearchInputSchema) {
   return (
     <>
       <input

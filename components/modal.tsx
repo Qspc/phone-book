@@ -1,10 +1,12 @@
 import { useIndexStore } from './types/dataUser';
 import { shallow } from 'zustand/shallow';
-
-export default function DeletedModal({ onClose, onDeleted }: any) {
+interface DeletedModalSchema {
+  onClose: () => void;
+  onDeleted: (index: number) => void;
+}
+export default function DeletedModal({ onClose, onDeleted }: DeletedModalSchema) {
   const [index, modalDelete] = useIndexStore((state: any) => [state.index, state.modalDelete, state.changeModalDelete], shallow);
   const handleDelete = () => {
-    // console.log('coba' + id);
     onDeleted(index);
   };
   if (!modalDelete) {

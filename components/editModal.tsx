@@ -1,9 +1,21 @@
 import { shallow } from 'zustand/shallow';
 import FormContact from './formContact';
 import { useIndexStore } from './types/dataUser';
+import { AllFormValues, AllNumberValues } from '@/types/formSchema';
 
-export default function EditModal({ allNumber, setAllNumber, form, setForm, allContact, setAllContact, getData, handleClearForm }: any) {
-  const [modalEdit, changemodalEdit] = useIndexStore((state: any) => [state.modalFavorite, state.changeModalEdit], shallow);
+interface EditModalSchema {
+  allNumber: AllNumberValues[];
+  setAllNumber: React.Dispatch<React.SetStateAction<AllNumberValues[]>>;
+  form: AllFormValues;
+  setForm: React.Dispatch<React.SetStateAction<AllFormValues>>;
+  allContact: AllFormValues[];
+  setAllContact: React.Dispatch<React.SetStateAction<AllFormValues[]>>;
+  getData: AllFormValues[];
+  handleClearForm: () => void;
+}
+
+export default function EditModal({ allNumber, setAllNumber, form, setForm, allContact, setAllContact, getData, handleClearForm }: EditModalSchema) {
+  const [modalEdit, changeModalEdit] = useIndexStore((state: any) => [state.modalEdit, state.changeModalEdit], shallow);
   if (!modalEdit) {
     return null;
   }
@@ -23,7 +35,7 @@ export default function EditModal({ allNumber, setAllNumber, form, setForm, allC
                 setAllContact={setAllContact}
                 getData={getData}
                 onClose={() => {
-                  changemodalEdit();
+                  changeModalEdit(false);
                   handleClearForm();
                 }}
               />
