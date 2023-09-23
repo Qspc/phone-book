@@ -1,19 +1,15 @@
 # must do
 
-- learn GraphQL
-- alert when form wrong
 - refactory code
 - regex and validator for first and last name
 - search for last name
-- cara peroleh iD ganti
+- testing using : Jest, emotion, lighthouse
 
 # do
 
 # revition
 
 # bug
-
-- local storage
 
 # finish
 
@@ -30,3 +26,5 @@
 - redesign
 - update form
 - modal for delete & favorite
+- cara peroleh iD ganti
+- edit data and modal

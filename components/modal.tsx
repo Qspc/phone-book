@@ -1,9 +1,13 @@
-export default function DeletedModal({ isModalOpen, onClose, id, onDeleted }: any) {
+import { useIndexStore } from './types/dataUser';
+import { shallow } from 'zustand/shallow';
+
+export default function DeletedModal({ onClose, onDeleted }: any) {
+  const [index, modalDelete] = useIndexStore((state: any) => [state.index, state.modalDelete, state.changeModalDelete], shallow);
   const handleDelete = () => {
     // console.log('coba' + id);
-    onDeleted(id);
+    onDeleted(index);
   };
-  if (!isModalOpen) {
+  if (!modalDelete) {
     return null;
   }
   return (
@@ -12,7 +16,7 @@ export default function DeletedModal({ isModalOpen, onClose, id, onDeleted }: an
         <div className="modal-container">
           <div className="w-full bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
             <div className="bg-gray-100 px-4 py-6 border border-gray-200">
-              <h2 className="text-[18px] font-semibold text-gray-800">are you sure you want deleted?</h2>
+              <h2 className="text-[18px] font-semibold text-gray-800">are you sure you want deleted? </h2>
             </div>
             <div className="flex gap-2 justify-end px-4 py-3">
               <button onClick={onClose} className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded">

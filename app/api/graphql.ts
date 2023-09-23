@@ -1,14 +1,36 @@
-// pages/api/graphql.ts
+// pages/api/graphql.js
 import { ApolloServer } from '@apollo/server';
-import { schema } from '../../graphql/schema';
-import strtSer
+import { gql } from '@apollo/client';
+import { startStandaloneServer } from '@apollo/server/standalone';
 
-const apolloServer = new ApolloServer({ schema });
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
 
-export const config = {
-  api: {
-    bodyParser: false,
+const books = [
+  {
+    title: 'The Awakening',
+    author: 'Kate Chopin',
+  },
+  {
+    title: 'City of Glass',
+    author: 'Paul Auster',
+  },
+];
+
+const resolvers = {
+  Query: {
+    hello: () => 'Hello, World!',
   },
 };
 
-export default apolloServer.createHandler({ path: '/api/graphql' });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
+
+// const { url } = startStandaloneServer(server, {
+//   listen: { port: 3000 },
+// });
