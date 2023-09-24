@@ -1,30 +1,16 @@
-# must do
+## Phone book
 
-- refactory code
-- regex and validator for first and last name
-- search for last name
-- testing using : Jest, emotion, lighthouse
+# Description
 
-# do
+Apps for list of contact that user have
 
-# revition
+# Feature
 
-# bug
+- a whole list of contact that user have
+- Create new contact
+- add/remove favorite contact
+- remove or edit contact
 
-# finish
+# Tech
 
-- search input
-- sorting for favorite first
-- onChange for favorite
-- delete button
-- pagination
-- bug: delete and change favorite after pagination
-- bug: search in page two
-- bug: delete in other page
-- implement local storage
-- validator for form
-- redesign
-- update form
-- modal for delete & favorite
-- cara peroleh iD ganti
-- edit data and modal
+Next js, Typescript, Tailwind css

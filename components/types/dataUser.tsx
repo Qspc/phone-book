@@ -1,6 +1,18 @@
 import { create } from 'zustand';
-
-export const useIndexStore = create((set) => ({
+interface indexStoreSchema {
+  index: number;
+  changeIndex: (id: number) => void;
+  removeIndex: () => void;
+  modalDelete: boolean;
+  modalEdit: boolean;
+  modalFavorite: boolean;
+  changeModalDelete: (status: boolean) => void;
+  changeModalEdit: (status: boolean) => void;
+  changeModalFavorite: (status: boolean) => void;
+  newContact: boolean;
+  changeNewContact: (status: boolean) => void;
+}
+export const useIndexStore = create<indexStoreSchema>((set) => ({
   index: 0,
   changeIndex: (id: number) => {
     set({ index: id });

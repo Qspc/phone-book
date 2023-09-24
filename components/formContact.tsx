@@ -9,13 +9,12 @@ interface FormContactSchema {
   onClose: () => void;
   allContact: AllFormValues[];
   setAllContact: React.Dispatch<React.SetStateAction<AllFormValues[]>>;
-  getData: AllFormValues[];
   allNumber: AllNumberValues[];
   setAllNumber: React.Dispatch<React.SetStateAction<AllNumberValues[]>>;
 }
 
-export default function FormContact({ form, setForm, onClose, allContact, setAllContact, getData, allNumber, setAllNumber }: FormContactSchema) {
-  const [index, newContact] = useIndexStore((state: any) => [state.index, state.newContact]);
+export default function FormContact({ form, setForm, onClose, allContact, setAllContact, allNumber, setAllNumber }: FormContactSchema) {
+  const [index, newContact] = useIndexStore((state) => [state.index, state.newContact]);
   const [favorite, setFavorite] = useState(false);
   const [number, setNumber] = useState<string>();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,15 +33,14 @@ export default function FormContact({ form, setForm, onClose, allContact, setAll
   const handleCreate = () => {
     const regexPattern = /^[A-Za-z0-9]+$/;
     const maxIdObject = allContact.reduce((max, current) => (current.id > max.id ? current : max), allContact[0]);
-    const isConstantValid = form.first_name ? regexPattern.test(form.first_name) : false;
+    const isConstantValid = form.first_name && form.last_name ? regexPattern.test(form.first_name) && regexPattern.test(form.last_name) : false;
     const isNotUnique = allContact.some((item) => item.first_name === form.first_name);
     if (!isConstantValid || isNotUnique) return;
     const newData = { ...form, phones: [...allNumber], favorite: favorite, id: maxIdObject.id + 1 };
-    // console.log(newData);
+    const allData = [...allContact, newData];
+    setAllContact(allData);
     // return;
-    getData.push(newData);
-    setAllContact([...allContact, newData]);
-    localStorage.setItem('phoneBook', JSON.stringify(getData));
+    localStorage.setItem('phoneBook', JSON.stringify(allData));
     onClose();
   };
   const handleUpdate = () => {

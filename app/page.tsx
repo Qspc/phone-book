@@ -30,12 +30,25 @@ const USER_DATA = gql`
     }
   }
 `;
+interface indexStoreSchema {
+  index: number;
+  changeIndex: (id: number) => void;
+  removeIndex: () => void;
+  modalDelete: boolean;
+  modalEdit: boolean;
+  modalFavorite: boolean;
+  changeModalDelete: (status: boolean) => void;
+  changeModalEdit: (status: boolean) => void;
+  changeModalFavorite: (status: boolean) => void;
+  newContact: boolean;
+  changeNewContact: (status: boolean) => void;
+}
 
 export default function Home() {
   // const { error, data } = useQuery(USER_DATA, { client });
   // if (data) console.log(data);
   const [changeModalDelete, changeModalFavorite, changeModalEdit, newContact, changeNewContact] = useIndexStore(
-    (state: any) => [state.changeModalDelete, state.changeModalFavorite, state.changeModalEdit, state.newContact, state.changeNewContact],
+    (state) => [state.changeModalDelete, state.changeModalFavorite, state.changeModalEdit, state.newContact, state.changeNewContact],
     shallow
   );
   const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
@@ -65,7 +78,10 @@ export default function Home() {
   };
   const filteredResult = useMemo<AllFormValues[]>(() => {
     if (searchResult) {
-      const newData = allContact.filter((item: any) => Object.values(item.first_name).join('').toLowerCase().includes(searchResult.toLowerCase()));
+      const newData = allContact.filter((item: AllFormValues) => {
+        const fullName = (item.first_name || '') + (item.last_name || '');
+        return fullName.toLowerCase().includes(searchResult.toLowerCase());
+      });
       const sortingData = sorting(newData);
       setCurrentPage(1);
       return sortingData;
@@ -81,7 +97,7 @@ export default function Home() {
     const page = Math.ceil(filteredResult.length / PER_PAGE);
     setTotalPages(page);
     if (currentPage > page) setCurrentPage(page);
-  }, [filteredResult]);
+  }, [searchResult]);
 
   const handleDelete = (id: number) => {
     const newData = allContact.filter((data: AllFormValues) => data.id !== id);
@@ -106,7 +122,7 @@ export default function Home() {
       last_name: '',
     });
     allNumber.splice(0, allNumber.length);
-    console.log(allContact);
+    // console.log(allContact);
   };
 
   const PER_PAGE = 10;
@@ -144,12 +160,11 @@ export default function Home() {
               }}
               allContact={allContact}
               setAllContact={setAllContact}
-              getData={getData}
               allNumber={allNumber}
               setAllNumber={setAllNumber}
             />
           ) : (
-            <button onClick={() => changeNewContact(false)} className="w-full cursor-pointer py-[8px] px-[12px] text-center border-2 border-solid bg-greyOne hover:shadow-sm ease-in-out duration-300">
+            <button onClick={() => changeNewContact(true)} className="w-full cursor-pointer py-[8px] px-[12px] text-center border-2 border-solid bg-greyOne hover:shadow-sm ease-in-out duration-300">
               + add contact
             </button>
           )}
@@ -168,9 +183,9 @@ export default function Home() {
           <Pagination handlePrev={handlePrev} handleNext={handleNext} />
         </section>
         {/* modal */}
-        <DeletedModal onClose={() => changeModalDelete()} onDeleted={handleDelete} />
+        <DeletedModal onClose={() => changeModalDelete(false)} onDeleted={handleDelete} />
         <FavoriteModal onClose={() => changeModalFavorite(false)} onFavorite={handleFavorite} data={allContact} />
-        <EditModal allNumber={allNumber} setAllNumber={setAllNumber} form={form} setForm={setForm} allContact={allContact} setAllContact={setAllContact} getData={getData} handleClearForm={handleClearForm} />
+        <EditModal allNumber={allNumber} setAllNumber={setAllNumber} form={form} setForm={setForm} allContact={allContact} setAllContact={setAllContact} handleClearForm={handleClearForm} />
       </main>
     </div>
   );

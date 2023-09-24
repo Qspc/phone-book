@@ -10,12 +10,11 @@ interface EditModalSchema {
   setForm: React.Dispatch<React.SetStateAction<AllFormValues>>;
   allContact: AllFormValues[];
   setAllContact: React.Dispatch<React.SetStateAction<AllFormValues[]>>;
-  getData: AllFormValues[];
   handleClearForm: () => void;
 }
 
-export default function EditModal({ allNumber, setAllNumber, form, setForm, allContact, setAllContact, getData, handleClearForm }: EditModalSchema) {
-  const [modalEdit, changeModalEdit] = useIndexStore((state: any) => [state.modalEdit, state.changeModalEdit], shallow);
+export default function EditModal({ allNumber, setAllNumber, form, setForm, allContact, setAllContact, handleClearForm }: EditModalSchema) {
+  const [modalEdit, changeModalEdit] = useIndexStore((state) => [state.modalEdit, state.changeModalEdit], shallow);
   if (!modalEdit) {
     return null;
   }
@@ -33,7 +32,6 @@ export default function EditModal({ allNumber, setAllNumber, form, setForm, allC
                 setForm={setForm}
                 allContact={allContact}
                 setAllContact={setAllContact}
-                getData={getData}
                 onClose={() => {
                   changeModalEdit(false);
                   handleClearForm();

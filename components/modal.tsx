@@ -5,7 +5,7 @@ interface DeletedModalSchema {
   onDeleted: (index: number) => void;
 }
 export default function DeletedModal({ onClose, onDeleted }: DeletedModalSchema) {
-  const [index, modalDelete] = useIndexStore((state: any) => [state.index, state.modalDelete, state.changeModalDelete], shallow);
+  const [index, modalDelete] = useIndexStore((state) => [state.index, state.modalDelete, state.changeModalDelete], shallow);
   const handleDelete = () => {
     onDeleted(index);
   };

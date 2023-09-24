@@ -15,7 +15,7 @@ interface ListContactSchema {
 }
 
 export default function ListContact({ itemsToShow, onModalOpen, onModalFavorite, onModalEdit, allContact, setForm, setAllNumber }: ListContactSchema) {
-  const changeIndex = useIndexStore((state: any) => state.changeIndex, shallow);
+  const changeIndex = useIndexStore((state) => state.changeIndex, shallow);
   const handlePick = (id: number, change: string) => {
     changeIndex(id);
     change === 'favorite' ? onModalFavorite() : '';
