@@ -51,8 +51,8 @@ export default function Home() {
     (state) => [state.changeModalDelete, state.changeModalFavorite, state.changeModalEdit, state.newContact, state.changeNewContact],
     shallow
   );
-  const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
-  const [allContact, setAllContact] = useState<AllFormValues[]>(getData);
+  // const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
+  const [allContact, setAllContact] = useState<AllFormValues[]>([]);
   const [form, setForm] = useState<AllFormValues>({
     id: 0,
     first_name: '',
@@ -63,7 +63,7 @@ export default function Home() {
   const [searchResult, setSearchResult] = useState(''); // input yang dicari
   const [allNumber, setAllNumber] = useState<AllNumberValues[]>([]);
   const [currentPage, setCurrentPage] = useState(1); // page
-  const [totalPages, setTotalPages] = useState(0); // total page
+  const [totalPages, setTotalPages] = useState(1); // total page
 
   const sorting = (data: AllFormValues[]) => {
     return data.sort((a: AllFormValues, b: AllFormValues) => {
@@ -76,6 +76,13 @@ export default function Home() {
       return 1;
     });
   };
+  useEffect(() => {
+    // const rawData = DummyData();
+    // const jsonData = JSON.stringify(rawData);
+    // localStorage.setItem('phoneBook', jsonData);
+    const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
+    setAllContact(getData);
+  }, []);
   const filteredResult = useMemo<AllFormValues[]>(() => {
     if (searchResult) {
       const newData = allContact.filter((item: AllFormValues) => {
@@ -87,17 +94,10 @@ export default function Home() {
       return sortingData;
     } else {
       const newData = sorting(allContact);
+      // console.log('masuk');
       return newData;
     }
   }, [allContact, setAllContact, searchResult, setSearchResult]);
-  useEffect(() => {
-    // const rawData = DummyData();
-    // const jsonData = JSON.stringify(rawData);
-    // localStorage.setItem('phoneBook', jsonData);
-    const page = Math.ceil(filteredResult.length / PER_PAGE);
-    setTotalPages(page);
-    if (currentPage > page) setCurrentPage(page);
-  }, [searchResult]);
 
   const handleDelete = (id: number) => {
     const newData = allContact.filter((data: AllFormValues) => data.id !== id);
@@ -128,13 +128,14 @@ export default function Home() {
   const PER_PAGE = 10;
   const startIndex = (currentPage - 1) * PER_PAGE;
   const endIndex = startIndex + PER_PAGE;
+  const page = Math.ceil(filteredResult.length / PER_PAGE);
   const handlePrev = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
   const handleNext = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < page) {
       setCurrentPage(currentPage + 1);
     }
   };
