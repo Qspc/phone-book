@@ -80,7 +80,10 @@ export default function Home() {
     // const rawData = DummyData();
     // const jsonData = JSON.stringify(rawData);
     // localStorage.setItem('phoneBook', jsonData);
-    const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
+    // localStorage.clear();
+    const storedData = localStorage.getItem('phoneBook');
+    const getData = storedData ? JSON.parse(storedData) : [];
+    // const getData = JSON.parse(localStorage.getItem('phoneBook') || '');
     setAllContact(getData);
   }, []);
   const filteredResult = useMemo<AllFormValues[]>(() => {

@@ -36,7 +36,7 @@ export default function FormContact({ form, setForm, onClose, allContact, setAll
     const isConstantValid = form.first_name && form.last_name ? regexPattern.test(form.first_name) && regexPattern.test(form.last_name) : false;
     const isNotUnique = allContact.some((item) => item.first_name === form.first_name);
     if (!isConstantValid || isNotUnique) return;
-    const newData = { ...form, phones: [...allNumber], favorite: favorite, id: maxIdObject.id + 1 };
+    const newData = { ...form, phones: [...allNumber], favorite: favorite, id: maxIdObject ? maxIdObject.id + 1 : 1 };
     const allData = [...allContact, newData];
     setAllContact(allData);
     // return;
